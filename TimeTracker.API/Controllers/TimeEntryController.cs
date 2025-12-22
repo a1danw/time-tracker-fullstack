@@ -27,6 +27,7 @@ public class TimeEntryController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<TimeEntryResponse>>> GetAllTimeEntries()
     {
+        // mapping done in service layer
         return Ok(await _timeEntryService.GetAllTimeEntries());
     }
 
@@ -40,7 +41,6 @@ public class TimeEntryController : ControllerBase
     {
         return Ok(_timeEntries.GetAllTimeEntries());
     } */
-
 
     /* public ActionResult<List<TimeEntry>> CreateTimeEntry(TimeEntry timeEntry)
     {
@@ -80,7 +80,6 @@ public class TimeEntryController : ControllerBase
         return Ok(result);
     } */
   
-      
     /* public async ActionResult<List<TimeEntryResponse>> UpdateTimeEntry(int id, TimeEntryUpdateRequest timeEntry)
     {
         var result = await _timeEntryService.UpdateTimeEntry(id, timeEntry);

@@ -23,6 +23,7 @@ public class TimeEntryRepository : ITimeEntryRepository
     {
         return _timeEntries;
     } */
+
     public async Task<List<TimeEntry>> GetAllTimeEntries()
     {
         // return await _context.TimeEntries.ToListAsync();
