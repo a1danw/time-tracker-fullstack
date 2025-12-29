@@ -21,7 +21,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     /* Can be used in .NET 9 - app.MapScalarApiReference();
-    app.MapOpenApi(); localhost:7189/scalar/v1.json */ 
+    app.MapOpenApi(); localhost:7189/scalar/v1.json */
+    // https://localhost:7078/swagger/index.html
 
     app.UseSwagger();
     app.UseSwaggerUI();
