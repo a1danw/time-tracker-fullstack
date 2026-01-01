@@ -4,6 +4,18 @@ A full-stack **Time Tracking application** built with **ASP.NET Web API**, **Bla
 
 ---
 
+## 🌐 Live Application
+
+The application is hosted on Azure and accessible at:
+
+**🔗 [https://timetracker-eve7bmdpa9encqcy.ukwest-01.azurewebsites.net/](https://timetracker-eve7bmdpa9encqcy.ukwest-01.azurewebsites.net/)**
+
+### API Documentation (Swagger)
+
+**📚 [https://timetracker-eve7bmdpa9encqcy.ukwest-01.azurewebsites.net/swagger/index.html](https://timetracker-eve7bmdpa9encqcy.ukwest-01.azurewebsites.net/swagger/index.html)**
+
+---
+
 ## 🏗️ Architecture Overview
 
 - **Backend**: ASP.NET Web API (.NET)
@@ -75,6 +87,8 @@ Connection Timeout=30;
 
 To use the **Query Editor** or connect from your local machine, you need to allow IP addresses through the firewall.
 
+> ⚠️ **Critical**: Make sure to enable **"Allow Azure services and resources to access this server"** in the **Networking** settings of **timetracker-dbserver**. Without this setting, your Azure-hosted application will encounter **500 Internal Server Errors** when trying to make requests to the database.
+
 ### Allow All IP Addresses (Dev Mode Only)
 
 1. Navigate to **Azure Portal** → **SQL servers** → **timetracker-dbserver**
@@ -135,7 +149,7 @@ dotnet tool install --global dotnet-ef
 ```bash
 cd ./TimeTracker.Api
 dotnet ef migrations add InitialCreate
-dotnet ef database update
+dotenv ef database update
 ```
 
 ---
@@ -151,6 +165,18 @@ dotnet ef migrations script
 ```bash
 dotnet ef migrations script -o Scripts/InitialCreate.sql
 ```
+
+#### Generate script from a specific migration onwards
+
+If you've already applied the `InitialCreate` migration and want to generate a script for all migrations after it up to the latest migration (e.g., `UserProjectRelation`), use:
+
+```bash
+dotnet ef migrations script InitialCreate UserProjectRelation -o Scripts/UserProjectRelation.sql
+```
+
+This generates a SQL script starting **after** `InitialCreate`, including all subsequent migrations up to the latest applied migration (`UserProjectRelation`). This is useful when you need to update an existing database that already has the initial schema.
+
+> 💡 **Tip**: This command excludes the `InitialCreate` migration and only includes migrations that come after it.
 
 ---
 

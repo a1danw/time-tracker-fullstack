@@ -1,0 +1,35 @@
+﻿@page "/timeentry"
+@page "/timeentry/{id:int?}"
+@inject ITimeEntryService TimeEntryService
+
+<h3>EditTimeEntry</h3>
+
+@* built in blazor component *@
+<EditForm Model="timeEntry">
+    <div>
+        <label for="startDate">Start</label>
+        <InputDate id="startDate" @bind-Value="timeEntry.Start" class="form-control" />
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    // cant use the TimeEntryRequest directly as we need to bind in blazor and its an immutable record
+    TimeEntryRequest timeEntry = new TimeEntryRequest();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id is not null)
+        {
+            var result = await TimeEntryService.GetTimeEntryById((int)Id);
+            timeEntry = new TimeEntryRequest
+            {
+                End = result.End,
+                Start = result.Start,
+                ProjectId = result.Project.Id
+            };
+        } 
+    }
+}

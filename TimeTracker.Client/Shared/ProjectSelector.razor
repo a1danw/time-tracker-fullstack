@@ -1,4 +1,5 @@
 ﻿@inject HttpClient Http
+@inject ITimeEntryService TimeEntryService
 
 <div class="form-group my-4">
     <!-- 2 way binding to update parent -->
@@ -13,8 +14,8 @@
 
 @code {
     // event callback invoked by parent (TimeEntries)
-    [Parameter]
-    public EventCallback<int> ProjectSelected { get; set; }
+    // [Parameter]
+    // public EventCallback<int> ProjectSelected { get; set; }
 
     private List<ProjectResponse> projects = new List<ProjectResponse>();
 
@@ -33,7 +34,8 @@
         {
             if(int.TryParse(e.Value.ToString(), out int projectId))
             {
-                await ProjectSelected.InvokeAsync(projectId);
+                await TimeEntryService.GetTimeEntriesByProject(projectId);
+                // await ProjectSelected.InvokeAsync(projectId);
             }
         }
     }
