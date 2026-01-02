@@ -1,5 +1,4 @@
 using Mapster;
-using TimeTracker.Shared.Models.Project;
 
 namespace TimeTracker.API.Services;
 
@@ -16,7 +15,7 @@ public class TimeEntryService : ITimeEntryService
     {
         var result = await _timeEntryRepo.GetAllTimeEntries();
         return result.Adapt<List<TimeEntryResponse>>();
-    } 
+    }
 
     /* public List<TimeEntryResponse> GetAllTimeEntries()
     {
@@ -38,7 +37,7 @@ public class TimeEntryService : ITimeEntryService
         //     End = t.End
         // }).ToList();
     } */
-    
+
     public async Task<TimeEntryResponse?> GetTimeEntryById(int id)
     {
         var result = await _timeEntryRepo.GetTimeEntryById(id);
@@ -73,8 +72,6 @@ public class TimeEntryService : ITimeEntryService
         var result = _timeEntryRepo.CreateTimeEntry(newEntry);
         return result.Adapt<List<TimeEntryResponse>>();
     } */
-
-    
     public async Task<List<TimeEntryResponse>> CreateTimeEntry(TimeEntryCreateRequest request)
     {
         // auto mapper
@@ -127,6 +124,7 @@ public class TimeEntryService : ITimeEntryService
         //  return null;
         // }
     }
+
     /* public List<TimeEntryResponse>? DeleteTimeEntry(int id)
     {
         var result = _timeEntryRepo.DeleteTimeEntry(id);
@@ -137,8 +135,6 @@ public class TimeEntryService : ITimeEntryService
 
         return result.Adapt<List<TimeEntryResponse>>();
     } */
-
-    
     public async Task<List<TimeEntryResponse>?> DeleteTimeEntry(int id)
     {
         var result = await _timeEntryRepo.DeleteTimeEntry(id);
@@ -149,4 +145,4 @@ public class TimeEntryService : ITimeEntryService
 
         return result.Adapt<List<TimeEntryResponse>>();
     }
-} 
+}
