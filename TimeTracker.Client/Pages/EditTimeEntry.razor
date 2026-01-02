@@ -1,0 +1,91 @@
+﻿@page "/timeentry"
+@page "/timeentry/{id:int?}"
+@inject ITimeEntryService TimeEntryService
+@inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+@if (Id is null)
+{
+    <h3>Create Time Entry</h3>
+}
+else
+{
+    <h3>Edit Time Entry</h3>
+}
+
+@* built in blazor component - OnSubmit replaced to check for validation first *@
+
+<EditForm Model="timeEntry" OnValidSubmit="HandleSubmit"> 
+    @* validates based on data annotations in the TimeEntryRequest model *@
+    <DataAnnotationsValidator />
+
+    <div>
+        <label for="startDate">Start</label>
+        <InputDate id="startDate" Type="InputDateType.DateTimeLocal" @bind-Value="timeEntry.Start" class="form-control" />
+    </div>
+    <div>
+        <label for="endDate">Start</label>
+        <InputDate id="endDate" Type="InputDateType.DateTimeLocal" @bind-Value="timeEntry.End" class="form-control" />
+    </div>
+    <div>
+        <label for="project">Project</label>
+        <InputSelect id="project" @bind-Value="timeEntry.ProjectId" class="form-control">
+            @foreach (var project in ProjectService.Projects)
+            {
+                <option value="@project.Id">@project.Name</option>
+            }
+            </InputSelect>
+        <ValidationMessage For="@(() => timeEntry.ProjectId)" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+
+    @* shows all errors for length, required etc. Removed as error message added to the model and displayed via ValidationMessage. *@
+    @* <ValidationSummary /> *@
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    // cant use the TimeEntryRequest directly as we need to bind in blazor and its an immutable record
+    TimeEntryRequest timeEntry = new TimeEntryRequest();
+
+    protected override void OnInitialized()
+    {
+        ProjectService.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var result = await TimeEntryService.GetTimeEntryById((int)Id);
+            timeEntry = new TimeEntryRequest
+            {
+                End = result.End,
+                Start = result.Start,
+                ProjectId = result.Project.Id
+            };
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is null)
+        {
+            Console.WriteLine("Create new time entry.");
+            await TimeEntryService.CreateTimeEntry(timeEntry);
+            NavigationManager.NavigateTo("/timeentries");
+        }
+        else
+        {
+            Console.WriteLine($"Edit time entry with Id {Id}");
+        }
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
+    }
+}

@@ -1,10 +1,17 @@
 ﻿@inject HttpClient Http
+@inject ITimeEntryService TimeEntryService
+@inject IProjectService ProjectService
+@implements IDisposable
+
+@* It can be dangerous to load the projects here, as the edit time entry page could be accessed first and not the project selector. 
+   Multiple components can instead share the same data wihout re-fetching.
+*@
 
 <div class="form-group my-4">
     <!-- 2 way binding to update parent -->
-    <InputSelect @bind-Value="projectId">
+    <InputSelect @bind-Value="projectId" @bind-Value:after="OnProjectChanged" class="form-control">
         <option value="0">All Projects</option>
-        @foreach (var project in projects)
+        @foreach (var project in ProjectService.Projects) // var project in projects
         {
             <option value="@project.Id">@project.Name</option>
         }
@@ -13,28 +20,33 @@
 
 @code {
     // event callback invoked by parent (TimeEntries)
-    [Parameter]
-    public EventCallback<int> ProjectSelected { get; set; }
+    // [Parameter]
+    // public EventCallback<int> ProjectSelected { get; set; }
 
-    private List<ProjectResponse> projects = new List<ProjectResponse>();
+    // private List<ProjectResponse> projects = new List<ProjectResponse>();
 
     private int projectId;
 
-    protected override async Task OnInitializedAsync()
+    // removed in favour of the ProjectService 
+    /* protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<List<ProjectResponse>>("api/project");
+    var result = await Http.GetFromJsonAsync<List<ProjectResponse>>("api/project");
         if (result != null)
             projects = result;
+    } */
+
+    protected override void OnInitialized()
+    {
+        ProjectService.OnChange += StateHasChanged;
     }
 
-    private async Task OnInput(ChangeEventArgs e) 
+    private async Task OnProjectChanged()
     {
-        if(e.Value != null)
-        {
-            if(int.TryParse(e.Value.ToString(), out int projectId))
-            {
-                await ProjectSelected.InvokeAsync(projectId);
-            }
-        }
+        await TimeEntryService.GetTimeEntriesByProject(projectId);
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
     }
 }

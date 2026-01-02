@@ -1,10 +1,16 @@
 ﻿@page "/timeentries"
-@inject HttpClient Http
+@inject ITimeEntryService TimeEntryService
+@inject NavigationManager NavigationManager
+@implements IDisposable
 
 <PageTitle>Time Entries</PageTitle>
 <h3>TimeEntries</h3>
 
-<ProjectSelector ProjectSelected="ProjectChanged" />
+<button class="btn btn-primary mb-2" @onclick="CreateTimeEntry">
+    Create Time Entry
+</button>
+
+@* moved to MainLayout.razor <ProjectSelector ProjectSelected="ProjectChanged" /> *@
 
 <table>
     <thead>
@@ -14,10 +20,11 @@
             <th>Duration</th>
             <th>Project</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var timeEntry in timeEntries) 
+        @foreach (var timeEntry in TimeEntryService.TimeEntries)  // timeEntries
         {
             <tr>
                 <td>@timeEntry.Start</td>
@@ -25,10 +32,15 @@
                 <td>@GetDuration(timeEntry.Start, timeEntry.End)</td>
                 <td>@timeEntry.Project.Name</td>
                 <td>
-                    <button 
-                    class="btn btn-primary"
-                    onclick="@(() => ShowProject(timeEntry.Project.Id))">
+                    <button class="btn btn-primary"
+                            @onclick="@(() => ShowProject(timeEntry.Project.Id))">
                         Show Project
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-primary"
+                            @onclick="@(() => EditTimeEntry(timeEntry.Id))">
+                        <i class="oi oi-pencil" />
                     </button>
                 </td>
             </tr>
@@ -38,25 +50,28 @@
 
 @if (projectId > 0)
 {
-    <ProjectDetails ProjectId="projectId" />
+    <ProjectDetails ProjectId="@projectId" />
 }
 
 @code {
-    private List<TimeEntryResponse> timeEntries = new List<TimeEntryResponse>();
-    int projectId;
+    // private List<TimeEntryResponse> timeEntries = new List<TimeEntryResponse>();
+    int projectId = 0;
 
+    // on render when DOM is ready
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<List<TimeEntryResponse>>("api/timeentry");
+        await TimeEntryService.GetTimeEntriesByProject(projectId);
+        TimeEntryService.OnChange += StateHasChanged;
+        /* var result = await Http.GetFromJsonAsync<List<TimeEntryResponse>>("api/timeentry");
         if(result != null)
         {
             timeEntries = result;
-        }
+        } */
     }
 
     private string GetDuration(DateTime? start, DateTime? end)
     {
-        if(start != null && end != null)
+        if (start != null && end != null)
         {
             var duration = end.Value - start.Value;
             var result = $"{duration.Hours}h {duration.Minutes}m";
@@ -75,7 +90,7 @@
         StateHasChanged();
     }
 
-    private async Task ProjectChanged(int projectId) // projectId from child component
+    /* private async Task ProjectChanged(int projectId) // projectId from child component
     {
         // time entries of certain project
         List<TimeEntryResponse>? result = null;
@@ -92,5 +107,21 @@
         {
             timeEntries = result;
         }
+    } */
+
+    // unsubscribe when component is destroyed
+    public void Dispose()
+    {
+        TimeEntryService.OnChange -= StateHasChanged;
+    }
+
+    private void CreateTimeEntry()
+    {
+        NavigationManager.NavigateTo("/timeentry");
+    }
+
+    private void EditTimeEntry(int id)
+    {
+        NavigationManager.NavigateTo($"/timeentry/{id}");
     }
 }
