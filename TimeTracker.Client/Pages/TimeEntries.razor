@@ -32,15 +32,10 @@
                 <td>@GetDuration(timeEntry.Start, timeEntry.End)</td>
                 <td>@timeEntry.Project.Name</td>
                 <td>
-                    <button class="btn btn-primary"
-                            @onclick="@(() => ShowProject(timeEntry.Project.Id))">
+                    <button 
+                    class="btn btn-primary"
+                    onclick="@(() => ShowProject(timeEntry.Project.Id))">
                         Show Project
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-primary"
-                            @onclick="@(() => EditTimeEntry(timeEntry.Id))">
-                        <i class="oi oi-pencil" />
                     </button>
                 </td>
             </tr>
