@@ -4,6 +4,7 @@
 @inject IProjectService ProjectService
 @inject NavigationManager NavigationManager
 @implements IDisposable
+@inject IJSRuntime JSRuntime // for displaying alert modal
 
 @if (Id is null)
 {
@@ -38,6 +39,11 @@ else
         </InputSelect>
         <ValidationMessage For="@(() => timeEntry.ProjectId)" />
     </div>
+
+    @if(Id is not null)
+    {
+        <button type="button" class="btn btn-danger mt-2 mx-1" @onclick="DeleteTimeEntry">Delete</button>
+    }
     <button type="submit" class="btn btn-primary mt-2">Submit</button>
 
     @* shows all errors for length, required etc. Removed as error message added to the model and displayed via ValidationMessage. *@
@@ -82,6 +88,17 @@ else
         {
             // Console.WriteLine($"Edit time entry with Id {Id}");
             await TimeEntryService.UpdateTimeEntry((int)Id, timeEntry);
+            NavigationManager.NavigateTo("/timeentries");
+        }
+    }
+
+    async Task DeleteTimeEntry()
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Do you really want to delete this entry?");
+
+        @if (Id is not null && confirmed)
+        {
+            await TimeEntryService.DeleteTimeEntry((int)Id);
             NavigationManager.NavigateTo("/timeentries");
         }
     }

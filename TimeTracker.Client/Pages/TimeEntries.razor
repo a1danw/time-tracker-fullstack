@@ -10,9 +10,36 @@
     Create Time Entry
 </button>
 
-@* moved to MainLayout.razor <ProjectSelector ProjectSelected="ProjectChanged" /> *@
+@* TimeEntryService.TimeEntries.AsQueryable() *@
 
-<table>
+<QuickGrid Items="FilteredTimeEntries">
+    <PropertyColumn Property="t => t.Start" />
+    <PropertyColumn Property="t => t.End" />
+    <PropertyColumn Property="t => GetDuration(t.Start, t.End)" Title="Duration" />
+    <PropertyColumn Property="t => t.Project.Name" Title="Project">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="projectFilter" @bind:event="oninput" placeholder="Project name..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn>
+        <button class="btn btn-primary"
+                @onclick="@(() => ShowProject(context.Project.Id))">
+            Show Project
+        </button>
+    </TemplateColumn>
+    <TemplateColumn>
+        <button class="btn btn-primary"
+                @onclick="@(() => EditTimeEntry(context.Id))">
+            <i class="oi oi-pencil" />
+        </button>
+    </TemplateColumn>
+</QuickGrid>
+
+@* moved to MainLayout.razor <ProjectSelector ProjectSelected="ProjectChanged" /> *@
+@* replace with blazor table *@
+@* <table>
     <thead>
         <tr>
             <th>Start</th>
@@ -46,7 +73,7 @@
             </tr>
         }
     </tbody>
-</table>
+</table> *@
 
 @if (projectId > 0)
 {
@@ -56,6 +83,21 @@
 @code {
     // private List<TimeEntryResponse> timeEntries = new List<TimeEntryResponse>();
     int projectId = 0;
+    private string? projectFilter;
+
+    IQueryable<TimeEntryResponse> FilteredTimeEntries
+    {
+        get
+        {
+            var result = TimeEntryService.TimeEntries.AsQueryable();
+
+            if(!string.IsNullOrWhiteSpace(projectFilter))
+            {
+                result = result.Where(t => t.Project.Name.Contains(projectFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return result;
+        }
+    }
 
     // on render when DOM is ready
     protected override async Task OnInitializedAsync()

@@ -46,4 +46,9 @@ public class TimeEntryService : ITimeEntryService
     {
         await _http.PutAsJsonAsync($"api/timeentry/{id}", request.Adapt<TimeEntryUpdateRequest>());
     }
+
+    public async Task DeleteTimeEntry(int id)
+    {
+        await _http.DeleteAsync($"api/timeentry/{id}");
+    }
 }
