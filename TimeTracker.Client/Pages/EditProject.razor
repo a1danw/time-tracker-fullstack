@@ -1,0 +1,83 @@
+﻿@page "/project"
+@page "/project/{Id:int}"
+@using Mapster
+@inject IProjectService ProjectService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+@if(Id is null)
+{
+	<PageTitle>Create a new project</PageTitle>
+	<h3>Create a new project</h3>
+}
+else
+{
+	<PageTitle>Edit the project "@project.Name"</PageTitle>
+	<h3>Edit the project "@project.Name"</h3>
+}
+
+<EditForm Model="project" OnValidSubmit="HandleSubmit">
+	<DataAnnotationsValidator />
+	<div>
+		<label for="name">Name</label>
+		<InputText id="name" class="form-control" @bind-Value="project.Name" />
+		<ValidationMessage For="() => project.Name"/>
+	</div>
+	<div>
+		<label for="description">Description</label>
+		<InputTextArea id="description" class="form-control" @bind-Value="project.Description" />
+	</div>
+	<div>
+		<label for="startDate">Start</label>
+		<InputDate id="startDate" class="form-control" @bind-Value="project.StartDate" />
+	</div>
+	<div>
+		<label for="endDate">End</label>
+		<InputDate id="endDate" class="form-control" @bind-Value="project.EndDate" />
+	</div>
+	@if(Id != null)
+	{
+		<button class="btn btn-danger mt-2" type="button" @onclick="DeleteProject">Delete</button>
+	}
+		<button class="btn btn-primary mt-2" type="submit">Submit</button>
+</EditForm>
+
+@code {
+	[Parameter]
+	public int? Id { get; set; }
+
+	ProjectRequest project = new ProjectRequest { Name = string.Empty };
+
+	override protected async Task OnParametersSetAsync()
+	{
+		if (Id != null)
+		{
+			var result = await ProjectService.GetProjectById((int)Id);
+			project = result.Adapt<ProjectRequest>();
+		}
+	}
+
+	async Task DeleteProject()
+	{
+		var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Do you really want to delete this project?");
+
+		if(Id != null && confirmed)
+		{
+			await ProjectService.DeleteProject((int)Id);
+			NavigationManager.NavigateTo("/projects");
+		}
+	}
+
+	async Task HandleSubmit()
+	{
+		if(Id == null)
+		{
+			await ProjectService.CreateProject(project);
+			NavigationManager.NavigateTo("/projects");
+		} else
+		{
+			await ProjectService.UpdateProject((int)Id, project);
+			NavigationManager.NavigateTo("/projects");
+		}
+	}
+}

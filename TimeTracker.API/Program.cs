@@ -46,7 +46,7 @@ app.Run();
 
 void ConfigureMapster()
 {
-    // map project details for returning to the client
+    // ProjectDetails is part of the Project, by default mapster cant interpret Descripion etc - map project details for returning to the client
     TypeAdapterConfig<Project, ProjectResponse>.NewConfig()
         .Map(dest => dest.Description, src => src.ProjectDetails != null ? src.ProjectDetails.Description : null)
         .Map(dest => dest.StartDate, src => src.ProjectDetails != null ? src.ProjectDetails.StartDate : null)

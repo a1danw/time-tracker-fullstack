@@ -12,7 +12,7 @@
 
 @* TimeEntryService.TimeEntries.AsQueryable() *@
 
-<QuickGrid Items="FilteredTimeEntries">
+<QuickGrid Items="FilteredTimeEntries" Pagination="@pagination">
     <PropertyColumn Property="t => t.Start" />
     <PropertyColumn Property="t => t.End" />
     <PropertyColumn Property="t => GetDuration(t.Start, t.End)" Title="Duration" />
@@ -75,6 +75,8 @@
     </tbody>
 </table> *@
 
+<Paginator State="@pagination" />
+
 @if (projectId > 0)
 {
     <ProjectDetails ProjectId="@projectId" />
@@ -84,6 +86,7 @@
     // private List<TimeEntryResponse> timeEntries = new List<TimeEntryResponse>();
     int projectId = 0;
     private string? projectFilter;
+	PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
 
     IQueryable<TimeEntryResponse> FilteredTimeEntries
     {

@@ -31,17 +31,30 @@ The application is hosted on Azure and accessible at:
 ## ☁️ Azure Resources
 
 ### Azure App Service
+
 Hosts the ASP.NET Web API and Blazor client.
 
 ### Azure SQL Database
-- **Server**: timetracker-dbserver  
-- **Database**: timetracker-db  
+
+- **Server**: timetracker-dbserver
+- **Database**: timetracker-db
 
 **Credentials (Demo / Dev only):**
-- Username: timetrackeradmin  
-- Password: Secretpass123  
 
-> ⚠️ Do NOT use these credentials in production.
+- Username: timetrackeradmin
+- Password: Secretpass123
+
+---
+
+## 🗃️ Creating an Azure SQL Database
+
+1. In the **Azure Portal**, go to **SQL databases** and click **Create**
+2. You'll first need to create a **SQL Database Server** — click **Create new** under the Server field
+   - Set a **server name**, **location**, and create an **admin login** (username + password)
+3. Once the server is created, you can create a **database** on that server from the same page
+4. Complete the setup and click **Review + Create**
+
+> 💡 The SQL Database Server is the container that hosts one or more databases. You need the server before you can create a database.
 
 ---
 
@@ -57,7 +70,7 @@ Hosts the ASP.NET Web API and Blazor client.
 ### Step 2: Add Connection String to Azure App Service
 
 1. Navigate to **Azure Portal** → **App Services** → **Your App Service**
-2. Select **Settings** → **Configuration**
+2. Select **Settings** → **Environment variables**
 3. Under **Connection strings**, click **+ New connection string**
 4. Configure the connection string:
    - **Name**: `DefaultConnection`
@@ -105,12 +118,14 @@ To use the **Query Editor** or connect from your local machine, you need to allo
 ### Allow Your Current IP (Recommended)
 
 Alternatively, you can allow only your current IP address:
+
 1. In the **Networking** page, click **+ Add your client IPv4 address**
 2. Click **Save**
 
 ### Enable Azure Services Access (Required for App Service)
 
 To allow your Azure App Service to connect to the database:
+
 1. In the **Networking** page, ensure **Allow Azure services and resources to access this server** is **checked**
 2. Click **Save**
 
@@ -141,11 +156,13 @@ When deploying your Web API to Azure, you may encounter a **500 Internal Server 
 ## 🗄️ Entity Framework Core & Migrations
 
 ### Install EF Core Tools
+
 ```bash
 dotnet tool install --global dotnet-ef
 ```
 
 ### Initial Migration
+
 ```bash
 cd ./TimeTracker.Api
 dotnet ef migrations add InitialCreate
@@ -154,14 +171,16 @@ dotenv ef database update
 
 ---
 
-### Generate SQL Scripts	
+### Generate SQL Scripts for Azure
 
 #### Output to terminal
+
 ```bash
 dotnet ef migrations script
 ```
 
 #### Save to file
+
 ```bash
 dotnet ef migrations script -o Scripts/InitialCreate.sql
 ```
@@ -240,6 +259,7 @@ This prevents errors when tables already exist.
 ## 📊 Charts & Reporting
 
 The Blazor client uses **Radzen Blazor Components** to display:
+
 - Hours per day
 - Time per project
 - Weekly / monthly summaries
@@ -249,9 +269,22 @@ The Blazor client uses **Radzen Blazor Components** to display:
 
 ## 🚀 Deployment
 
-- GitHub Actions CI/CD
-- Azure App Service deployment
-- Environment-based configuration
+### Azure App Service Setup
+
+1. In the **Azure Portal**, click **Create a resource** → **Web App**
+2. Add or create a **Resource Group**
+3. Configure the app:
+   - **Publish**: Code
+   - **Runtime stack**: .NET (match your project version)
+   - **Operating System**: Linux
+4. Once created, the web app will appear under **App Services**
+
+### Connecting GitHub for CI/CD
+
+1. Navigate to your **App Service** → **Deployment Center**
+2. Select **GitHub** as the source and choose your repository
+3. To verify authorization, go to your **GitHub profile** → **Settings** → **Applications** → **Authorized OAuth Apps** — **Azure App Service** should be listed there
+4. Once set up, a **GitHub Actions workflow file** will automatically appear in your repository and handle deployments on every push
 
 ---
 
