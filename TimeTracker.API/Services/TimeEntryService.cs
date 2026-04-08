@@ -145,4 +145,12 @@ public class TimeEntryService : ITimeEntryService
 
         return result.Adapt<List<TimeEntryResponse>>();
     }
+
+    public async Task<TimeEntryResponseWrapper> GetTimeEntries(int skip, int take)
+    {
+        var timeEntries = await _timeEntryRepo.GetTimeEntries(skip, take);
+        var timeEntryResponses = timeEntries.Adapt<List<TimeEntryResponse>>();
+        var timeEntriesCount = await _timeEntryRepo.GetTimeEntriesCount();
+        return new TimeEntryResponseWrapper { TimeEntries = timeEntryResponses, Count = timeEntriesCount };
+    }
 }

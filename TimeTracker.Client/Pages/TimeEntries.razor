@@ -12,7 +12,7 @@
 
 @* TimeEntryService.TimeEntries.AsQueryable() *@
 
-<QuickGrid Items="FilteredTimeEntries" Pagination="@pagination">
+<QuickGrid ItemsProvider="timeEntriesProvider" Pagination="@pagination">
     <PropertyColumn Property="t => t.Start" />
     <PropertyColumn Property="t => t.End" />
     <PropertyColumn Property="t => GetDuration(t.Start, t.End)" Title="Duration" />
@@ -87,6 +87,7 @@
     int projectId = 0;
     private string? projectFilter;
 	PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    GridItemsProvider<TimeEntryResponse>? timeEntriesProvider;
 
     IQueryable<TimeEntryResponse> FilteredTimeEntries
     {
@@ -105,6 +106,12 @@
     // on render when DOM is ready
     protected override async Task OnInitializedAsync()
     {
+        timeEntriesProvider = async req =>
+        {
+            var response = await TimeEntryService.GetTimeEntries(req.StartIndex, (int)req.Count);
+            return GridItemsProviderResult.From(items: response!.TimeEntries, totalItemCount: response!.Count);
+        };
+
         await TimeEntryService.GetTimeEntriesByProject(projectId);
         TimeEntryService.OnChange += StateHasChanged;
         /* var result = await Http.GetFromJsonAsync<List<TimeEntryResponse>>("api/timeentry");

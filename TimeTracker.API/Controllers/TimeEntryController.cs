@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Shared.Models.Project;
 
@@ -5,6 +6,7 @@ namespace TimeTracker.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize] // auth header required for every request
 public class TimeEntryController : ControllerBase
 {
     private readonly ITimeEntryService _timeEntryService;
@@ -29,6 +31,12 @@ public class TimeEntryController : ControllerBase
     {
         // mapping done in service layer
         return Ok(await _timeEntryService.GetAllTimeEntries());
+    }
+
+    [HttpGet("{skip}/{limit}")]
+    public async Task<ActionResult<TimeEntryResponseWrapper>> GetTimeEntries(int skip, int limit)
+    {
+        return Ok(await _timeEntryService.GetTimeEntries(skip, limit));
     }
 
     [HttpGet("project/{projectId}")]
