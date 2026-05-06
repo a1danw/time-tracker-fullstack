@@ -1,4 +1,27 @@
 ﻿@inherits LayoutComponentBase
+@using Blazored.Toast.Configuration
+
+<BlazoredToasts 
+    Position="ToastPosition.BottomRight"
+    Timeout="10"
+    ShowProgressBar="true" />
+
+@* <BlazoredToasts
+        Position="ToastPosition.BottomRight"
+        Timeout="10"
+        IconType="IconType.FontAwesome"
+        SuccessClass="success-toast-override"
+        SuccessIcon="fa fa-thumbs-up"
+        ErrorIcon="fa fa-bug" /> *@
+
+@* <BlazoredToasts Position="ToastPosition.BottomRight"
+        Timeout="10"
+        IconType="IconType.Material"
+        ErrorIcon="error_outline"
+        InfoIcon="school"
+        SuccessIcon="done_outline"
+        WarningIcon="warning" /> *@
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,8 +29,7 @@
 
     <main>
         <div class="top-row px-4">
-            <ProjectSelector />
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+           <LoginDisplay />
         </div>
 
         <article class="content px-4">

@@ -27,16 +27,20 @@ builder.Services.AddSwaggerGen(options => // applies authorization button to swa
 // builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDefaultIdentity<User>(options => 
-{
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireDigit = false;
-    options.Password.RequireUppercase = false;
-    options.User.RequireUniqueEmail = true;
-    options.SignIn.RequireConfirmedEmail = false;
-}).AddEntityFrameworkStores<DataContext>();
+builder.Services.AddIdentity<User, IdentityRole>(options => // AddDefaultIdentity
+    {
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedEmail = false;
+    }).AddEntityFrameworkStores<DataContext>()
+      .AddDefaultTokenProviders();
 // builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<DataContext>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // check claims in jwt for the role   
+})
     .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -49,7 +53,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSecurityKey"]!))
         };
     }); // bearer string/token for every auth header http request
-    
 
 builder.Services.AddHttpContextAccessor(); // for accessing user context in services instead of passing through layers explicitly
 builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();

@@ -34,11 +34,14 @@ namespace TimeTracker.API.Services
                 return new LoginResponse(false, "User doesn't exist.");
             }
 
-            var claims = new[]
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, request.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSecurityKey"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

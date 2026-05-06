@@ -1,0 +1,11 @@
+﻿@* knows if user is authenticated or not - uses AuthenticationStateProvider *@
+<AuthorizeView>
+    <NotAuthorized>
+        <a href="register">Register</a>
+        <a href="login">Login</a>
+    </NotAuthorized>
+    <Authorized>
+        Hello, @context.User.Identity!.Name!
+        <a href="logout">Logout</a>
+    </Authorized>
+</AuthorizeView>

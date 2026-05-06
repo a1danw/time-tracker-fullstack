@@ -102,3 +102,128 @@ a, .btn-link {
     border: 1px solid black;
     padding: 10px;
 }
+
+/* ── Blazored Toast overrides (match original v4.2.1 look) ── */
+.blazored-toast {
+    background-color: #fff;
+    color: #000000bd!important;
+    border-top: 6px solid #fff;
+    box-shadow: rgba(0,0,0,0.30) 0px 10px 30px 2px;
+    padding: 1rem 1.25rem;
+    border-radius: .25rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.blazored-toast-error {
+    background-color: #fff!important;
+    border-top: 6px solid #dc2626;
+}
+
+.blazored-toast-success {
+    background-color: #fff!important;
+    border-top: 6px solid #16a34a;
+}
+
+.blazored-toast-warning {
+    background-color: #fff;
+    border-top: 6px solid #eab308;
+}
+
+.blazored-toast-info {
+    background-color: #fff;
+    border-top: 6px solid #2563eb;
+}
+
+.blazored-toast-icon {
+    font-size: 1.5rem;
+    padding: 0 0.75rem 0 0;
+}
+
+.blazored-toast-error .blazored-toast-icon {
+    color: #dc2626;
+}
+
+.blazored-toast-success .blazored-toast-icon {
+    color: #16a34a;
+}
+
+.blazored-toast-warning .blazored-toast-icon {
+    color: #eab308;
+}
+
+.blazored-toast-info .blazored-toast-icon {
+    color: #2563eb;
+}
+
+.blazored-toast-body {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row !important;
+}
+
+.blazored-toast-body .blazored-toast-header {
+    order: 2;
+    margin-left: 0.75rem;
+    flex-shrink: 0;
+}
+
+.blazored-toast-body .blazored-toast-header h5 {
+    display: none;
+}
+
+.blazored-toast-body p {
+    font-size: 0.875rem;
+    order: 1;
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.blazored-toast-body .blazored-toast-header .blazored-toast-close {
+    color: #b0b0b0;
+    font-size: 0.75rem;
+    background: none;
+    border: 1.5px solid #c5c5c5;
+    border-radius: 50%;
+    width: 1.2rem;
+    height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.blazored-toast-body .blazored-toast-header .blazored-toast-close:hover {
+    color: #888;
+    border-color: #999;
+}
+
+.blazored-toast-body .blazored-toast-header .blazored-toast-close .blazored-toast-close-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blazored-toast-body .blazored-toast-header .blazored-toast-close svg {
+    width: 0.55em;
+    height: 0.55em;
+}
+
+.blazored-toast-error .blazored-toast-progressbar>span,
+.blazored-toast-success .blazored-toast-progressbar>span,
+.blazored-toast-warning .blazored-toast-progressbar>span,
+.blazored-toast-info .blazored-toast-progressbar>span { 
+    background-color: #f5f4f4fe!important;
+}
+
+.blazored-toast-progressbar {
+    background-color: #f4f4f4!important;
+    height: 4px!important;
+    position: absolute!important;
+    bottom: 0!important;
+    left: 0!important;
+    width: 100%!important;
+}

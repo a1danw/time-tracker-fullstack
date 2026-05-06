@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @implements IDisposable
 @inject IJSRuntime JSRuntime // for displaying alert modal
+@attribute [Authorize]
 
 @if (Id is null)
 {

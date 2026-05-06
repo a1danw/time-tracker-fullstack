@@ -6,7 +6,7 @@ namespace TimeTracker.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Admin")] // (Roles = "Admin, User")
 public class ProjectController : ControllerBase
 {
     private readonly IProjectService _projectService;
